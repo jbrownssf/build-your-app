@@ -2,9 +2,9 @@ angular.module('starter.controllers', [])
 
 .controller('DashCtrl', ['$scope', 'SSFBuildAnAppService', function($scope, SSFBuildAnAppService) {
   
-  // $scope.consoleLog = function(content) {
-  //   console.log(content);
-  // };
+  $scope.consoleLog = function(content) {
+    console.log(content);
+  };
   $scope.toolBox = {};
   SSFBuildAnAppService.toolBox($scope.toolBox);
   
