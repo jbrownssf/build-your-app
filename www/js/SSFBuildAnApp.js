@@ -10,7 +10,7 @@ angular.module('SSFBuildAnApp', [])
     
     var templateChoices = [
         {'function': "toolBox.selectTemplate({'type': 'basicDiv'})", 'name': 'div'},
-        {'function': "toolBox.selectTemplate({'type': 'bar'})", 'name': 'bar'},
+        {'function': "toolBox.selectTemplate({'type': 'header'})", 'name': 'header'},
         {'function': "consoleLog('it works!')", 'name': 'footer'},
         {'function': "consoleLog('it works!')", 'name': 'button'},
         {'function': "consoleLog('it works!')", 'name': 'icons'},
@@ -68,7 +68,7 @@ angular.module('SSFBuildAnApp', [])
         box.submitDiv = function() {
             //different depending on the format being used
             box.undoArray = [];
-            box.templateArray.push(box.newDiv);
+            box.templateArray.push(JSON.parse(JSON.stringify(box.newDiv)));
             box.updateDisplay();
             box.selectTemplate(box.newDiv.template);
         };
@@ -101,11 +101,14 @@ angular.module('SSFBuildAnApp', [])
         };
         box.templates = function(shapeTemplate) {
             //stores the formatting of each template
+            shapeTemplate.headerName = 'bar-header';
+            if(shapeTemplate.header)
+                shapeTemplate.headerName = 'bar-subheader';
             switch (shapeTemplate.template) {
                 case 'basicDiv':
                     return '<div class="' + shapeTemplate.class + '">' + shapeTemplate.newContent + '</div>';
-                case 'bar':
-                    return '<div class="bar bar-header ' + shapeTemplate.color + '"><h1 class="' + shapeTemplate.class + '">' + shapeTemplate.newContent + '</h1></div>';
+                case 'header':
+                    return '<div class="bar ' + shapeTemplate.headerName + ' ' + shapeTemplate.color + '"><h1 class="' + shapeTemplate.class + '">' + shapeTemplate.newContent + '</h1></div>';
                 case 'icon':
                     //Statements executed when the result of expression matches valueN
                     break;
@@ -128,15 +131,16 @@ angular.module('SSFBuildAnApp', [])
                         'newContent': true
                     };
                     break;
-                case 'bar':
-                    box.colorChoices = createColorsArray(data.type);
+                case 'header':
+                    box.colorChoices = createColorsArray('bar');
                     box.newDiv = {
-                        'template': 'bar',
+                        'template': 'header',
                         'class': 'title'
                     };
                     if(data.undoRedo !== undefined)
                         box.newDiv = data.undoRedo;
                     box.inputTemplate = {
+                        'header': true,
                         'class': true,
                         'color': true,
                         'newContent': true
@@ -162,7 +166,7 @@ angular.module('SSFBuildAnApp', [])
                 '</ion-header-bar>'+ 
                 '<ion-content>' +
                     '<ion-scroll direction="x" style="height:75px;" scrollbar-x>' +
-                        '<div class="row" style="width:1250px">' +
+                        '<div class="row" style="width:1275px">' +
                             '<button ng-click="toolBox.undo()" class="button button-outline button-dark">undo</button>' +
                             '<button ng-click="toolBox.redo()" class="button button-outline button-dark">redo</button>';
         for(var i in templateChoices) {
@@ -175,13 +179,15 @@ angular.module('SSFBuildAnApp', [])
                     '<div class="list">' +
                         //add any new input fields here
                         '<label class="item item-input item-select" ng-show="toolBox.inputTemplate.color"><div class="input-label">Color</div><select ng-model="toolBox.newDiv.color"><option ng-repeat="item in toolBox.colorChoices">{{item}}</select></label>' +
+                        '<li ng-show="toolBox.inputTemplate.header" class="item item-toggle">Sub Header?<label class="toggle toggle-assertive"><input ng-model="toolBox.newDiv.header" type="checkbox"><div class="track"><div class="handle"></div></div></label></li>' +
                         '<label class="item item-input" ng-show="toolBox.inputTemplate.newContent"><textarea ng-model="toolBox.newDiv.newContent" placeholder="content"></textarea></label>' +
                         '<label class="item item-input" ng-show="toolBox.inputTemplate.class"><textarea ng-model="toolBox.newDiv.class" placeholder="list of classes"></textarea></label>' +
                     '</div>' +
                     '<button ng-click="toolBox.submitDiv()" class="col button button-block button-calm">submit div</button>' +
                     '<div class="text-center">Current Preview</div>' +
+                    //preview types
                     '<div ng-show="toolBox.showPreview(' + "'basicDiv'" + ')" ng-class="toolBox.newDiv.class">{{toolBox.newDiv.newContent}}</div>' +
-                    '<ion-scroll style="height: 100px" ng-show="toolBox.showPreview(' + "'bar'" + ')"><div class="bar bar-header" ng-class="toolBox.newDiv.color"><h1 ng-class="toolBox.newDiv.class">{{toolBox.newDiv.newContent}}</h1></div></ion-scroll>' +
+                    '<ion-scroll style="height: 100px" ng-show="toolBox.showPreview(' + "'header'" + ')"><div class="bar bar-header" ng-class="toolBox.newDiv.color"><h1 ng-class="toolBox.newDiv.class">{{toolBox.newDiv.newContent}}</h1></div></ion-scroll>' +
                 '</ion-content>' +
             '</ion-modal-view>';
         
