@@ -11,7 +11,7 @@ angular.module('SSFBuildAnApp', [])
     var templateChoices = [
         {'function': "toolBox.selectTemplate({'type': 'basicDiv'})", 'name': 'div'},
         {'function': "toolBox.selectTemplate({'type': 'header'})", 'name': 'header'},
-        {'function': "consoleLog('it works!')", 'name': 'footer'},
+        {'function': "toolBox.selectTemplate({'type': 'footer'})", 'name': 'footer'},
         {'function': "consoleLog('it works!')", 'name': 'button'},
         {'function': "consoleLog('it works!')", 'name': 'icons'},
         {'function': "consoleLog('it works!')", 'name': 'list'},
@@ -101,14 +101,19 @@ angular.module('SSFBuildAnApp', [])
         };
         box.templates = function(shapeTemplate) {
             //stores the formatting of each template
-            shapeTemplate.headerName = 'bar-header';
-            if(shapeTemplate.header)
-                shapeTemplate.headerName = 'bar-subheader';
             switch (shapeTemplate.template) {
                 case 'basicDiv':
                     return '<div class="' + shapeTemplate.class + '">' + shapeTemplate.newContent + '</div>';
                 case 'header':
+                    shapeTemplate.headerName = 'bar-header';
+                    if(shapeTemplate.header)
+                        shapeTemplate.headerName = 'bar-subheader';
                     return '<div class="bar ' + shapeTemplate.headerName + ' ' + shapeTemplate.color + '"><h1 class="' + shapeTemplate.class + '">' + shapeTemplate.newContent + '</h1></div>';
+                case 'footer':
+                    // shapeTemplate.headerName = 'bar-header';
+                    // if(shapeTemplate.header)
+                    //     shapeTemplate.headerName = 'bar-subheader';
+                    return '<div class="bar bar-footer ' + shapeTemplate.color + '"><div class="' + shapeTemplate.class + '">' + shapeTemplate.newContent + '</div></div>';
                 case 'icon':
                     //Statements executed when the result of expression matches valueN
                     break;
@@ -141,6 +146,20 @@ angular.module('SSFBuildAnApp', [])
                         box.newDiv = data.undoRedo;
                     box.inputTemplate = {
                         'header': true,
+                        'class': true,
+                        'color': true,
+                        'newContent': true
+                    };
+                    break;
+                case 'footer':
+                    box.colorChoices = createColorsArray('bar');
+                    box.newDiv = {
+                        'template': 'footer',
+                        'class': 'title'
+                    };
+                    if(data.undoRedo !== undefined)
+                        box.newDiv = data.undoRedo;
+                    box.inputTemplate = {
                         'class': true,
                         'color': true,
                         'newContent': true
