@@ -69,8 +69,13 @@ angular.module('SSFBuildAnApp', [])
         box.redo = function() {
             if(box.undoArray[box.undoArray.length - 1] !== undefined) {
                 box.templateArray.push(box.undoArray.pop());
-                box.newDiv = box.undoArray[box.undoArray.length-1];
-                box.selectTemplate({'undoRedo': box.undoArray[box.undoArray.length-1]});
+                if(box.undoArray[box.undoArray.length - 1] !== undefined) {
+                    box.newDiv = box.undoArray[box.undoArray.length-1];
+                }
+                else {
+                    box.newDiv = {'template': box.templateArray[box.templateArray.length-1].template};
+                }
+                box.selectTemplate({'undoRedo': box.newDiv});
                 box.updateDisplay();
             }
         };
