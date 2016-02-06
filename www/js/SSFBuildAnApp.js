@@ -9,7 +9,7 @@ angular.module('SSFBuildAnApp', [])
         console.log(content);
     }
     
-    function includeDivToolBox($scope, divTools) {
+    /*function includeDivToolBox($scope, divTools) {
         if(divTools.templateArray === undefined)
             divTools.templateArray = [];
         if(divTools.undoArray === undefined)
@@ -46,10 +46,55 @@ angular.module('SSFBuildAnApp', [])
                 divTools.updateDisplay();
             }
         };
-    }
+    }*/
     
-    service.openPageSettings = function($event, $scope, divTools) {
-        includeDivToolBox($scope, divTools);
+    
+    service.toolBox = function(box) {
+        box.myAppBuild = '';
+        box.templateArray = [];
+        box.undoArray = [];
+        box.newDiv = {
+            // name each object the class that it will become? ie: class, style, ng-class, ng-style, etc.
+            // 'newClass': '',
+            // 'newContent': ''
+        };
+        box.updateDisplay = function() {
+            box.myAppBuild = '<div>';
+            for(var i in box.templateArray) {
+                //call an external function to handle all nested rows and have it call itself as necessary
+                box.myAppBuild += box.templateArray[i];
+            }
+            box.myAppBuild += '</div>';
+            // console.log(box.myAppBuild);
+        };
+        box.submitDiv = function() {
+            // console.log($scope.toolBox);
+            //different depending on the format being used
+            box.templateArray.push('<div class="' + box.newDiv.newClass + '">' + box.newDiv.newContent + '</div>');
+            box.updateDisplay();
+            box.newDiv = {};
+        };
+        box.stepInRow = function() {
+            
+        };
+        box.stepOutRow = function() {
+            
+        };
+        box.undo = function() {
+            if(box.templateArray[box.templateArray.length - 1] !== undefined) {
+                box.undoArray.push(box.templateArray.pop());
+                box.updateDisplay();
+            }
+        };
+        box.redo = function() {
+            if(box.undoArray[box.undoArray.length - 1] !== undefined) {
+                box.templateArray.push(box.undoArray.pop());
+                box.updateDisplay();
+            }
+        };
+    };
+    
+    service.openPageSettings = function($event, $scope) {
         var template = 
             '<ion-modal-view backdropClickToClose="false" id="buildanapp">' + 
                 '<ion-header-bar>' +
@@ -59,8 +104,8 @@ angular.module('SSFBuildAnApp', [])
                 '<ion-content>' +
                     '<ion-scroll direction="x" style="height:75px;" scrollbar-x>' +
                         '<div class="row" style="width:1200px">' +
-                            '<button ng-click="divTools.undo()" class="test button button-outline button-dark ">undo</button>' +
-                            '<button ng-click="divTools.redo()" class="button button-outline button-dark ">redo</button>' +
+                            '<button ng-click="toolBox.undo()" class="test button button-outline button-dark ">undo</button>' +
+                            '<button ng-click="toolBox.redo()" class="button button-outline button-dark ">redo</button>' +
                             '<button ng-click="" class="test button button-outline button-dark ">bar</button>' +
                             '<button ng-click="" class="test button button-outline button-dark ">footer</button>' +
                             '<button ng-click="" class="test button button-outline button-dark ">button</button>' +
@@ -78,15 +123,13 @@ angular.module('SSFBuildAnApp', [])
                         '</div>' +
                     '</ion-scroll>' +
                     '<div class="text-center">Add a Div</div>' +
-                    '<form name="divForm" ng-submit="divTools.submitDiv(divForm)">' +
                         '<div class="row">' +
-                            '<input ng-model="divTools.newDiv.divClass" class="col" placeholder="list of classes">' +
-                            '<input ng-model="divTools.newDiv.divContent" class="col" placeholder="div content">' +
+                            '<input ng-model="toolBox.newDiv.newClass" class="col" placeholder="list of classes">' +
+                            '<input ng-model="toolBox.newDiv.newContent" class="col" placeholder="div content">' +
                         '</div>' +
-                        '<button class="col button button-block button-calm">submit div</button>' +
-                    '</form>' +
+                        '<button ng-click="toolBox.submitDiv()" class="col button button-block button-calm">submit div</button>' +
                     '<div class="text-center">Current Div Preview</div>' +
-                    '<div ng-class="divTools.newDiv.divClass">{{divTools.newDiv.divContent}}</div>' +
+                    '<div ng-class="toolBox.newDiv.newClass">{{toolBox.newDiv.newContent}}</div>' +
                 '</ion-content>' +
             '</ion-modal-view>';
         

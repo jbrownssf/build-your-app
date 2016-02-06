@@ -5,11 +5,14 @@ angular.module('starter.controllers', [])
   // $scope.consoleLog = function(content) {
   //   console.log(content);
   // };
+  $scope.toolBox = {};
+  SSFBuildAnAppService.toolBox($scope.toolBox);
   
-  var divTools = {};
   $scope.openPageSettings = function($event) {
-    SSFBuildAnAppService.openPageSettings($event, $scope, divTools);
+    SSFBuildAnAppService.openPageSettings($event, $scope);
   };
+  
+  
   
   $scope.test = 'hello world';
   
