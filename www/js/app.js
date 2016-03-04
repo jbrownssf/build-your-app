@@ -22,6 +22,7 @@ angular.module('starter', ['ionic', 'SSFBuildAnApp'])
     }
   });
 })
+
 .config(function($stateProvider, $urlRouterProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
